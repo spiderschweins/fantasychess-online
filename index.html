@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>    <title>6x6 Fantasy Chess</title>
+    <link rel="icon" type="image/x-icon" href="fantasy_chess.ico">
+    <style>        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #2f3542;
+            color: #ddd;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }        .center_div {
+            border: none;
+            margin: 0 auto;
+            max-width: 1200px;
+            background-color: #34495e;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.4);
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(6, 80px);
+            width: fit-content;
+            border: 6px solid #2c3e50;
+            margin: 20px auto;
+            box-shadow: 0 0 25px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            padding: 4px;
+            background: #2c3e50;
+            gap: 2px;
+        }
+
+        .square {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            border-radius: 3px;
+            text-shadow: 2px 2px 3px rgba(0,0,0,0.3);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .white { background-color: #ecf0f1; color: #2c3e50; }
+        .black { background-color: #95a5a6; color: #2c3e50; }
+        .selected { 
+            background-color: #3498db;
+            box-shadow: inset 0 0 15px rgba(52, 152, 219, 0.5);
+        }
+        .valid-move { 
+            position: relative;
+            background-color: #2ecc71;
+            box-shadow: inset 0 0 15px rgba(46, 204, 113, 0.5);
+        }
+        .valid-move::before {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: rgba(0,0,0,0.15);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        #status {
+            text-align: center;
+            margin: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #captured {
+            text-align: center;
+            margin: 10px;
+            font-size: 18px;
+        }
+
+        #menu {
+            text-align: center;
+            margin: 10px 0;
+        }        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            font-weight: bold;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        #rulesText {
+            margin: 20px auto;
+            padding: 25px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 8px;
+            max-width: 600px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }#rulesText ul {
+            text-align: left;
+        }        #moveHistory {
+            position: absolute;
+            right: 20px;
+            top: 100px;
+            width: 220px;
+            max-height: 400px;
+            overflow-y: auto;
+            background: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            color: #ecf0f1;
+        }
+
+        #moveHistory h3 {
+            color: #3498db;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+
+        .moveEntry {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 8px;
+            border-bottom: 1px solid #34495e;
+            transition: background-color 0.2s;
+        }
+
+        .moveEntry:hover {
+            background-color: #34495e;
+        }
+
+        .moveNumber {
+            color: #95a5a6;
+            margin-right: 12px;
+            font-weight: bold;
+        }
+
+        .settingsPanel {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 400px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .settingsPanel div {
+            margin: 10px 0;
+        }
+
+        .settingsPanel label {
+            display: inline-block;
+            width: 100px;
+            margin-right: 10px;
+        }
+
+        .settingsPanel select {
+            padding: 5px;
+            width: 150px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>    <div class="center_div">
+        <h1>6x6 Fantasy Chess</h1>
+        <div id="menu">
+            <button id="showSettings">New Game</button>
+            <button id="rules">Rules</button>
+        </div>
+        <div id="gameSettings" class="settingsPanel" style="display: none;">
+            <h3>New Game Settings</h3>
+            <div>
+                <label>Play as:</label>
+                <select id="playerColor">
+                    <option value="white">White</option>
+                    <option value="black">Black</option>
+                </select>
+            </div>
+            <div>
+                <label>AI Difficulty:</label>
+                <select id="aiDifficulty">
+                    <option value="1">Easy</option>
+                    <option value="2">Medium</option>
+                    <option value="3">Hard</option>
+                </select>
+            </div>
+            <button id="startGame">Start Game</button>
+            <button id="cancelSettings">Cancel</button>
+        </div>        <div id="status">White's turn</div>
+        <div id="board" class="board"></div>
+        <div id="captured"></div>
+        <div id="moveHistory">
+            <h3>Move History</h3>
+            <div id="moves"></div>
+        </div>
+        <div id="rulesText" style="display: none;">
+            <h2>Fantasy Chess Rules</h2>
+            <p>This is a 6x6 variant of chess with special pieces:</p>
+            <ul>
+                <li>Hawk (H): Moves like a queen but must move at least 2 squares, can jump over one piece</li>
+                <li>Color Switcher Bishop (C): Moves like both bishop and king</li>
+                <li>Other pieces move as in regular chess</li>
+            </ul>
+            <button id="closeRules">Close Rules</button>
+        </div>
+    </div>    <script src="pieces.js"></script>
+    <script src="ai.js"></script>
+    <script src="game.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
