@@ -9,7 +9,7 @@ function initGame(playerColor = 'white', aiDifficulty = 2) {
     game = new ChessGame(playerColor, aiDifficulty);
     if (playerColor === 'black') {
         // If player is black, make AI's first move
-        setTimeout(() => game.ai.makeMove(), 500);
+        setTimeout(() => game.ai.makeMove(), 5000);
     }
 }
 
