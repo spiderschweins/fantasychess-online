@@ -183,7 +183,7 @@ class ChessGame {
         if (opponentInCheck) {
             if (!opponentHasMoves) {
                 // Checkmate - current player wins
-                document.getElementById('status').textContent = `Checkmate! ${this.currentPlayer === 'white' ? 'Black' : 'White'} wins!`;
+                document.getElementById('status').textContent = `Checkmate! ${this.currentPlayer === 'white' ? 'White' : 'Black'} wins!`;
                 this.gameActive = false;
                 this.playSound('check');
                 return;
